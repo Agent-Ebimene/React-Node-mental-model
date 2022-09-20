@@ -7,8 +7,8 @@
   align-items: center;
   height: 100vh;
 }
-.app input {
-  margin-top: 2rem;
-  width: 100%;
-  height: 40px;
+.app button {
+  cursor: pointer;
+  width: 40px;
+  margin: 1rem;
 }

@@ -1,62 +1,62 @@
 import React from "react";
-import { useState, useMemo, useEffect } from "react";
+import { useReducer } from "react";
 import ExpensiveComponent from "./ExpensiveComponent";
 import "./App.css";
 
-//Learn useMemo Hook from the Doc and a Youtube tutorial for building good performing apps.
+// Understanding useReducers
+//This is a hook that is used for managing the state of the app.
+//This is very similar to the reduce array method in js
+const ACTION = {
+  INCREMENT: "increment",
+  DECREMENT: "decrement",
+  NEW_USER_INPUT: "newUserInput",
+  TG_COLOR: "tg_color",
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "INCREMENT":
+      return {
+        count: state.count + 1,
+      };
+    case "DECREMENT":
+      return {
+        count: state.count - 1,
+      };
+    case "newUserInput":
+      return {
+        ...state,
+        userInput: action.payload,
+      };
+    case "tgClor":
+      return {
+        ...state,
+        color: !state.color,
+      };
+    default:
+      throw new Error();
+  }
+};
 
 const App = () => {
-  const [text, setText] = useState("");
-  const [number, setNumber] = useState(0);
-  const [age, setAge] = useState(0);
-  const [name, setName] = useState("");
-  const [country, setCountry] = useState("");
-
-  const userType = useMemo(
-    () => ({
-      age: age < 17 ? true : false,
-      citizen: country === "USA" ? true : false,
-    }),
-    [age, country]
-  );
-  useEffect(() => {
-    console.log("user type has changed!");
-  }, [userType]);
-
+  const [state, dispatch] = useReducer(reducer, {
+    count: 0,
+    userInput: "",
+    color: false,
+  });
   return (
     <div className="app">
       <input
         type="text"
-        value={text}
-        placeholder="Enter a text"
-        onChange={(e) => setText(e.target.value)}
+        value={state.userInput}
+        onChange={(e) =>
+          dispatch({ type: ACTION.NEW_USER_INPUT, payload: e.target.value })
+        }
       ></input>
-      <input
-        type="number"
-        value={number}
-        placeholder="Enter a number"
-        onChange={(e) => setNumber(e.target.value)}
-      ></input>
-
-      <input
-        type="text"
-        value={name}
-        placeholder="Enter name"
-        onChange={(e) => setName(e.target.value)}
-      ></input>
-      <input
-        type="number"
-        value={age}
-        placeholder="Enter Your Age"
-        onChange={(e) => setAge(e.target.value)}
-      ></input>
-      <input
-        type="text"
-        value={country}
-        placeholder="USA"
-        onChange={(e) => setCountry(e.target.value)}
-      ></input>
-      <ExpensiveComponent />
+      <h1>Count: {state.count}</h1>
+      <button onClick={() => dispatch({ type: ACTION.INCREMENT })}>+</button>
+      <button onClick={() => dispatch({ type: ACTION.DECREMENT })}>-</button>
+      <button>color</button>
+      <p>{state.userInput}</p>
     </div>
   );
 };
